@@ -28,7 +28,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-//creating an Node server
+//creating an node server
 const server = http.createServer(app);
 
 app.use('/api/users', userRoutes);
@@ -39,6 +39,7 @@ app.use('/api/uploads', uploadRoutes);
 const __dirname = path.resolve();
 app.use('/uploads', express.static(path.join(__dirname + '/uploads'))); 
 
+//listening the node server 
 server.listen(port, () =>{
     console.log(`Server is runnig on PORT: ${port}`);
 });
