@@ -1,26 +1,26 @@
-import express from 'express'
-import path from 'path'
-import http from 'http';
-import cors from 'cors'
-import cookieParser from 'cookie-parser'
-import dotenv from 'dotenv'
+import express from "express";
+import path from "path";
+import http from "http";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
 dotenv.config();
 
-const port = process.env.PORT  || 3000;
+const port = process.env.PORT || 3000;
 
 // db connection
-import connectToDB from './config/db/db.js'
-import userRoutes from './routes/user.route.js'
-import productRoute from './routes/product.route.js'
-import uploadRoutes from './routes/upload.route.js'
+import connectToDB from "./config/db/db.js";
+import userRoutes from "./routes/user.route.js";
+import productRoute from "./routes/product.route.js";
+import uploadRoutes from "./routes/upload.route.js";
 
-connectToDB()
-
+connectToDB();
 
 const corsOptions = {
-  origin: 'http://localhost:5173/',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
+  origin: "http://localhost:5173",
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
 
 const app = express();
 app.use(cors(corsOptions));
@@ -31,17 +31,14 @@ app.use(cookieParser());
 //creating an node server
 const server = http.createServer(app);
 
-app.use('/api/users', userRoutes);
-app.use('/api/products', productRoute);
-app.use('/api/uploads', uploadRoutes);
-
+app.use("/api/users", userRoutes);
+app.use("/api/products", productRoute);
+app.use("/api/uploads", uploadRoutes);
 
 const __dirname = path.resolve();
-app.use('/uploads', express.static(path.join(__dirname + '/uploads'))); 
+app.use("/uploads", express.static(path.join(__dirname + "/uploads")));
 
-//listening the node server 
-server.listen(port, () =>{
-    console.log(`Server is runnig on PORT: ${port}`);
+//listening the node server
+server.listen(port, () => {
+  console.log(`Server is runnig on PORT: ${port}`);
 });
-
-
