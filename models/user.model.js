@@ -4,7 +4,6 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
-        minlength: [3, 'username should be 3 letter long ']
     },
     email: {
         type: String,
@@ -17,8 +16,7 @@ const userSchema = new mongoose.Schema({
     },
     isAdmin: {
         type: Boolean,
-        required: true,
-        default: false,
+        default: false
     }
 },
     { timestamps: true }

@@ -19,7 +19,6 @@ connectToDB();
 const corsOptions = {
   origin: "http://localhost:5173",
   credentials: true,
-  optionsSuccessStatus: 200,
 };
 
 const app = express();
@@ -36,7 +35,7 @@ app.use("/api/products", productRoute);
 app.use("/api/uploads", uploadRoutes);
 
 const __dirname = path.resolve();
-app.use("/uploads", express.static(path.join(__dirname + "/uploads")));
+app.use("/uploads", express.static(path.join(__dirname + "uploads")));
 
 //listening the node server
 server.listen(port, () => {

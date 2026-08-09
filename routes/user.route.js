@@ -33,4 +33,3 @@ router.route('/:id')
     .put(authUser, authAdmin, updateUserById);
 
 export default router;
-
