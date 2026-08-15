@@ -1,9 +1,10 @@
 import asyncHandler from "../middlewares/asyncHandler.middleware.js";
 import productModel from "../models/product.model.js";
+import deleteFromCloudinary from "../utils/deleteFromCloudinary.js";
 
 const createProduct = asyncHandler(async (req, res) => {
     try {
-        const { name, brand, quantity, description, actualPrice, discountPrice } = req.fields;
+        const { name, brand, quantity, description, actualPrice, discountPrice, image, imagePublicId } = req.fields;
 
         switch (true) {
             case !name:
@@ -14,10 +15,13 @@ const createProduct = asyncHandler(async (req, res) => {
                 return res.status(400).json({ error: "Quantity is rquired !" })
             case !description:
                 return res.status(400).json({ error: "Description is rquired !" })
-            case !discountPrice:
+            case !actualPrice:
                 return res.status(400).json({ error: "Price is rquired !" })
             case !discountPrice:
                 return res.status(400).json({ error: "Discount price is rquired !" })
+            case !image:
+                return res.status(400).json({ error: "Image is rquired !" })
+           
         }
 
         const product = await productModel.create({ ...req.fields });
@@ -31,7 +35,7 @@ const createProduct = asyncHandler(async (req, res) => {
 
 const updateProduct = asyncHandler(async (req, res) => {
     try {
-        const { name, brand, quantity, description, actualPrice } = req.fields;
+        const { name, brand, quantity, description, actualPrice, image, imagePublicId } = req.fields;
 
         switch (true) {
             case !name:
@@ -44,6 +48,17 @@ const updateProduct = asyncHandler(async (req, res) => {
                 return res.status(400).json({ error: "Description is rquired !" })
             case !actualPrice:
                 return res.status(400).json({ error: "Price is rquired !" })
+            case !image:
+                return res.status(400).json({ error: "Image is rquired !" })
+        }
+
+        const existingProduct = await productModel.findById(req.params.id);
+        if (existingProduct && existingProduct.imagePublicId && existingProduct.imagePublicId !== imagePublicId) {
+            try {
+                await deleteFromCloudinary(existingProduct.imagePublicId);
+            } catch (cloudError) {
+                console.error("Failed to delete old Cloudinary image:", cloudError);
+            }
         }
 
         const product = await productModel.findByIdAndUpdate(
@@ -62,11 +77,21 @@ const updateProduct = asyncHandler(async (req, res) => {
 
 const deleteProduct = asyncHandler(async (req, res) => {
     try {
-        const product = await productModel.findByIdAndDelete(req.params.id);
+        const product = await productModel.findById(req.params.id);
 
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
         }
+
+        if (product.imagePublicId) {
+            try {  
+                await deleteFromCloudinary(product.imagePublicId);
+            } catch (cloudError) {
+                console.error("Failed to delete Cloudinary image:", cloudError);
+            }
+        }
+
+        await productModel.findByIdAndDelete(req.params.id);
 
         res.status(200).json({ message: "Product deleted sucessfully ✅" });
 
