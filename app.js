@@ -14,7 +14,7 @@ import productRoute from "./routes/product.route.js";
 import uploadRoutes from "./routes/upload.route.js";
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: "https://online-bazzer.vercel.app",
   credentials: true,
 };
 
