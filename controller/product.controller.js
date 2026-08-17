@@ -4,7 +4,7 @@ import deleteFromCloudinary from "../utils/deleteFromCloudinary.js";
 
 const createProduct = asyncHandler(async (req, res) => {
     try {
-        const { name, brand, quantity, description, actualPrice, discountPrice, image, imagePublicId } = req.fields;
+        const { name, brand, quantity, description, actualPrice, discountPrice, image } = req.fields;
 
         switch (true) {
             case !name:
