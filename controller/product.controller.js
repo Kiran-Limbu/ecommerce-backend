@@ -103,20 +103,30 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
 const fetchProduct = asyncHandler(async (req, res) => {
     try {
-        const pageSize = 6;
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 6;
         const keyword = req.query.keyword ? {
             name: {
                 $regex: req.query.keyword,
                 $options: "i"
             }
-        } : [];
+        } : {};
+
         const count = await productModel.countDocuments({ ...keyword });
-        const products = await productModel.find({ ...keyword }).limit(pageSize);
+        const totalPages = Math.ceil(count / limit);
+        const skip = (page - 1) * limit;
+
+        const products = await productModel
+            .find({ ...keyword })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
         res.json({
             products,
-            page: 1,
-            pages: Math.ceil(count / pageSize),
-            hasMore: false,
+            page,
+            pages: totalPages,
+            hasMore: page < totalPages,
         });
 
     } catch (error) {
